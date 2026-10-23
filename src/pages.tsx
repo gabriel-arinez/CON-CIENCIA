@@ -1,5 +1,7 @@
 import Science from "./components/Science";
 import Quiz from "./components/Quiz";
+import LessonVisual from "./components/LessonVisual";
+import { challengeQuestions } from "./challenges";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
@@ -363,6 +365,7 @@ export function Lesson({ s, update }: { s: State; update: Update }) {
               <p>{sec.text}</p>
             </section>
           ))}
+          <LessonVisual topicId={t.id} />
           <section className="panel">
             <h3>Conecta las ideas</h3>
             <div className="flow">
@@ -804,11 +807,7 @@ export function Tools({ s, update }: { s: State; update: Update }) {
                 key={selected}
                 topic={t}
                 advanced
-                questions={[
-                  t.advanced,
-                  topics[(topics.indexOf(t) + 1) % 15].advanced,
-                  topics[(topics.indexOf(t) + 2) % 15].advanced,
-                ]}
+                questions={challengeQuestions(t)}
                 update={update}
               />
               <Button variant="ghost" onClick={() => setStarted(false)}>
