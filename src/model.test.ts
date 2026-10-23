@@ -49,7 +49,7 @@ const passed: State = {
   attempts: [
     {
       topic: "celula",
-      answers: [0, 1, 0],
+      answers: [0, 1, 2],
       score: 2,
       total: 3,
       date: new Date().toISOString(),
