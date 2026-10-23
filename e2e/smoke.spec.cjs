@@ -17,7 +17,7 @@ test("móvil: cabecera visible, cursos, cuestionario y progreso persistente", as
   await expect(page.locator(".result")).toContainText("3 / 3");
   await page.reload();
   await page.goto("/progreso");
-  await expect(page.getByText("1 de 15 temas completados")).toHaveCount(0);
+  await expect(page.locator(".stats-grid")).toContainText("7%");
   await expect(page.locator(".stats-grid")).toContainText("1");
 });
 
