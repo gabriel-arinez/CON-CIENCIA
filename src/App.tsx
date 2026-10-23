@@ -7,8 +7,6 @@ import {
   User,
   Sparkles,
   Leaf,
-  Menu,
-  X,
   ArrowRight,
 } from "lucide-react";
 import { initial, KEY, load, type State } from "./model";
@@ -32,7 +30,6 @@ export default function App() {
     }
   });
   const [storageError, setStorageError] = useState(false);
-  const [menu, setMenu] = useState(false);
   const location = useLocation();
   useEffect(() => {
     try {
@@ -44,7 +41,6 @@ export default function App() {
   }, [s]);
   useEffect(() => {
     window.scrollTo(0, 0);
-    setMenu(false);
   }, [location.pathname]);
   const nav = [
     { to: "/", label: "Inicio", icon: Home },
@@ -57,7 +53,7 @@ export default function App() {
       <a className="skip" href="#contenido">
         Saltar al contenido
       </a>
-      <aside className={`sidebar ${menu ? "open" : ""}`}>
+      <aside className="sidebar">
         <Link to="/" className="brand">
           <img src="/logo.jpeg" alt="CON-CIENCIA · Tu plataforma de biología" />
         </Link>
@@ -90,13 +86,10 @@ export default function App() {
       </aside>
       <div className="main-shell">
         <header className="topbar">
-          <button
-            className="mobile-menu"
-            aria-label={menu ? "Cerrar menú" : "Abrir menú"}
-            onClick={() => setMenu((v) => !v)}
-          >
-            {menu ? <X /> : <Menu />}
-          </button>
+          <Link className="mobile-brand" to="/" aria-label="CON-CIENCIA, ir al inicio">
+            <img src="/logo.jpeg" alt="" />
+            <strong><span>CON-</span>CIENCIA</strong>
+          </Link>
           <div className="breadcrumb">
             Tu plataforma de biología <span>/</span>{" "}
             <b>
