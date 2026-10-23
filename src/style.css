@@ -1760,3 +1760,52 @@ footer {
     display: none;
   }
 }
+
+/* V2 — mobile-first readability and lesson diagram presentation. */
+.lesson-visual { margin: 0 0 22px; }
+.lesson-visual svg { display: block; width: 100%; height: auto; max-height: 335px; margin: 12px auto 0; }
+.lesson-visual figcaption { color: #605976; font-size: 13px; line-height: 1.6; padding: 6px 0; }
+.mobile-brand { display: none; }
+@media (max-width: 700px) {
+  .mobile-brand { display: inline-flex; align-items: center; gap: 7px; min-width: 0; font-size: 15px; font-weight: 800; color: #2697A8; }
+  .mobile-brand img { width: 35px; height: 35px; object-fit: contain; border-radius: 7px; }
+  .mobile-brand strong { white-space: nowrap; letter-spacing: -.6px; }
+  .mobile-brand strong span { color: #9176CD; }
+  .breadcrumb { display: none; }
+  .topbar { gap: 7px; padding: 0 14px; }
+  .top-actions { gap: 8px; margin-left: auto; }
+  .plan-badge { font-size: 11px; padding: 7px; }
+  .avatar { width: 34px; height: 34px; flex-shrink: 0; }
+  .page-heading .eyebrow, .section-title .eyebrow { font-size: 11px; }
+  .page-heading p { font-size: 14px; }
+  .hero p { font-size: 13px; max-width: 85%; }
+  .hero .pill { font-size: 10px; }
+  .hero-caption { font-size: 12px; }
+  .hero .button { font-size: 13px; }
+  .progress-summary .eyebrow, .progress-summary p { font-size: 12px; }
+  .progress-ring span { font-size: 10px; }
+  .section-title > a { font-size: 12px; max-width: 125px; }
+  .section-title .pro-tag { font-size: 10px; max-width: 150px; }
+  .unit-art > .pill { font-size: 11px; }
+  .unit-body .eyebrow { font-size: 12px; }
+  .unit-body h3 { font-size: 18px; min-height: 0; }
+  .unit-body p { font-size: 13px; min-height: 0; line-height: 1.6; }
+  .small, .card-link { font-size: 12px; }
+  .tool h3, .pro-banner h3 { font-size: 15px; }
+  .tool p, .pro-banner p { font-size: 13px; }
+  .tool .pro-tag { font-size: 11px; }
+  .bottom-nav a { font-size: 12px; min-height: 48px; }
+  footer { font-size: 11px; }
+  .list-row p, .stat span { font-size: 12px; }
+  .list-row h3 { font-size: 15px; }
+  .unit-detail p { font-size: 14px; }
+  .hero h2 { font-size: clamp(23px, 6.5vw, 30px); }
+  .lesson-visual figcaption { font-size: 13px; }
+  .lesson-visual svg { min-width: 0; }
+}
+@media (max-width: 365px) {
+  .topbar { padding: 0 9px; }
+  .mobile-brand { font-size: 13px; gap: 4px; }
+  .mobile-brand img { width: 30px; height: 30px; }
+  .plan-badge { font-size: 10px; }
+}
