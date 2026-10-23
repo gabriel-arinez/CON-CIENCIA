@@ -26,7 +26,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { topics, units, sources } from "./content";
-import { initial, progress, completed, weakTopics, type State } from "./model";
+import { initial, progress, completed, weakTopics, wrongQuestionIndices, type State } from "./model";
 import { Button } from "./components/ui/button";
 type Update = (s: State | ((s: State) => State)) => void;
 const icons = [Atom, Dna, Heart, Leaf];
@@ -832,8 +832,8 @@ export function Tools({ s, update }: { s: State; update: Update }) {
               return (
                 <div className="review-item" key={t.id}>
                   <h3>{t.title}</h3>
-                  {t.questions
-                    .filter((q, i) => q.correct !== a.answers[i])
+                  {wrongQuestionIndices(a, t.questions)
+                    .map((i) => t.questions[i])
                     .map((q) => (
                       <p key={q.prompt}>
                         <b>{q.prompt}</b>
