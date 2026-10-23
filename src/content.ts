@@ -63,12 +63,18 @@ function topic(
   const q = (
     f: [string, string, string, string, string],
     i: number,
-  ): Question => ({
-    prompt: f[0],
-    options: i % 2 ? [f[2], f[1], f[3]] : [f[1], f[2], f[3]],
-    correct: i % 2 ? 1 : 0,
-    explanation: f[4],
-  });
+  ): Question => {
+    // Each question receives a stable position, without exposing a global
+    // first/second/first answer pattern across the entire curriculum.
+    const choices = [f[1], f[2], f[3]];
+    const offset = [...f[0]].reduce((sum, ch) => sum + ch.charCodeAt(0), i) % 3;
+    return {
+      prompt: f[0],
+      options: choices.map((_, index) => choices[(index + offset) % 3]),
+      correct: (3 - offset) % 3,
+      explanation: f[4],
+    };
+  };
   return {
     id,
     unit,
