@@ -9,6 +9,8 @@ import {
   completed,
   canUsePro,
   weakTopics,
+  remainingSeconds,
+  wrongQuestionIndices,
   type State,
 } from "./model";
 test("currículo exacto: 4 unidades, 15 temas y evaluaciones válidas", () => {
@@ -93,4 +95,31 @@ test("Pro puede desactivarse conservando avance y repaso", () => {
   assert.equal(canUsePro(free), false);
   assert.equal(progress(free), progress(pro));
   assert.equal(weakTopics(free)[0].id, "celula");
+});
+
+test("rechaza notas o respuestas manipuladas y preserva intentos V1", () => {
+  assert.equal(load(JSON.stringify(passed)).attempts.length, 1);
+  assert.equal(wrongQuestionIndices(passed.attempts[0], topics[0].questions).length, 1);
+  const fake = { ...passed.attempts[0], score: 3 };
+  assert.equal(load(JSON.stringify({ ...passed, attempts: [fake] })).attempts.length, 0);
+  const noAnswer = { ...passed.attempts[0], answers: [0], score: 1 };
+  assert.equal(load(JSON.stringify({ ...passed, attempts: [noAnswer] })).attempts.length, 0);
+  const bankTwo = {
+    ...passed.attempts[0],
+    answers: topics[0].questions.map(q => q.correct),
+    score: 3,
+    bankVersion: 2,
+  };
+  assert.equal(load(JSON.stringify({ ...passed, attempts: [bankTwo] })).attempts.length, 1);
+  const badNew = { ...bankTwo, answers: [0, 0, 0], score: 3 };
+  if (badNew.answers.some((answer, i) => answer !== topics[0].questions[i].correct)) {
+    assert.equal(load(JSON.stringify({ ...passed, attempts: [badNew] })).attempts.length, 0);
+  }
+});
+test("temporizador respeta 90 segundos y vence al llegar a cero", () => {
+  assert.equal(remainingSeconds(90000, 0), 90);
+  assert.equal(remainingSeconds(90000, 250), 90);
+  assert.equal(remainingSeconds(90000, 89500), 1);
+  assert.equal(remainingSeconds(90000, 90000), 0);
+  assert.equal(remainingSeconds(90000, 92000), 0);
 });
