@@ -52,10 +52,10 @@ En **Perfil → Reiniciar recorrido**, confirma el borrado para comenzar una nue
 3. Recarga: la aprobación y el resultado se conservan.
 4. Mi plan compara Gratuito (Bs 0) y Pro (Bs 15/mes referenciales).
 5. Pulsa **Activar demostración Pro**. No se cobra ni se crea una suscripción.
-6. Usa Desafíos (3 preguntas de aplicación, 90 segundos, 100 puntos por acierto), Flashcards (15 tarjetas), Repaso personalizado y Estadísticas.
+6. Usa Desafíos (3 preguntas del tema elegido, 90 segundos, 100 puntos por acierto), Flashcards (15 tarjetas), Repaso personalizado y Estadísticas.
 7. En Mi plan pulsa **Desactivar demostración Pro**. Las herramientas se restringen de nuevo y el progreso permanece.
 
-El desafío mezcla el tema elegido con los dos siguientes, en orden circular. Se atribuye al tema de partida en el historial. Al terminar el tiempo se corrigen las respuestas marcadas; las no contestadas cuentan como errores. El repaso utiliza los errores del último intento básico por tema. Las estadísticas incluyen todos los intentos y distinguen desafíos de evaluaciones básicas.
+Cada desafío incluye tres preguntas del tema seleccionado; así las estadísticas corresponden realmente a ese tema. Al terminar el tiempo se corrigen las respuestas marcadas; las no contestadas cuentan como errores. El repaso utiliza los errores del último intento básico por tema. Las estadísticas incluyen todos los intentos y distinguen desafíos de evaluaciones básicas.
 
 ## Contenido y fuentes
 
@@ -80,3 +80,55 @@ Explicaciones escolares originales y esquemas simplificados. No sustituyen atenc
 ## Límites del MVP
 
 Datos por navegador y origen, sin sincronización entre equipos, autenticación ni control comercial. Pro es una demostración local y puede manipularse desde el navegador. Los bancos son finitos y repetibles; no hay IA, pagos, notificaciones ni funcionamiento offline garantizado. Los esquemas son educativos y simplificados. Borrar los datos del navegador elimina el avance. La accesibilidad incorpora etiquetas, foco visible, teclado y movimiento reducido; no se realizó una auditoría externa completa.
+
+## Versión 2 — mejoras del MVP
+
+- Respuestas correctas con posiciones estables pero variadas, sin patrón fijo general.
+- Retos Pro de tres preguntas exclusivas del tema seleccionado.
+- Diagramas científicos SVG locales para las unidades 1 y 2.
+- Identidad visible y tipografía más legible en pantallas móviles.
+- Compatibilidad con resultados V1 previamente almacenados, y comprobación de puntuaciones e integridad de resultados V2.
+- Tests unitarios, verificación de build y pruebas de navegador Chromium mediante GitHub Actions.
+
+### Publicación alternativa mediante Wrangler (sin instalar la aplicación GitHub en Cloudflare)
+
+Para evitar el error de autorización recurrente GitHub–Cloudflare, puedes publicar la versión 2 como proyecto de **Direct Upload**. El proyecto y las versiones seguirán en GitHub; el despliegue se hará con Wrangler.
+
+Después de fusionar V2 en main:
+
+```bash
+git switch main
+git pull --ff-only origin main
+npm ci
+npm run lint
+npm run typecheck
+npm test
+npm run build
+npx wrangler login
+npx wrangler pages project create con-ciencia --production-branch main
+npx wrangler pages deploy dist --project-name con-ciencia --branch main
+```
+
+Crea el proyecto una única vez. Si `con-ciencia` ya existe en tu cuenta, omite el comando de creación. Si el nombre no está disponible globalmente, elige otro y actualízalo también en `.github/workflows/cloudflare-pages.yml`.
+
+**Despliegues posteriores:** configura en GitHub, dentro de *Settings → Secrets and variables → Actions*, dos secretos:
+
+- `CLOUDFLARE_API_TOKEN`: token de Cloudflare con permiso **Account → Cloudflare Pages → Edit** (no pegar su contenido en chats ni commits).
+- `CLOUDFLARE_ACCOUNT_ID`: identificador de la cuenta de Cloudflare.
+
+El workflow `.github/workflows/cloudflare-pages.yml` publica automáticamente al actualizar `main` cuando los secretos estén configurados, y también puede ejecutarse desde la pestaña *Actions → Publicar CON-CIENCIA en Cloudflare Pages → Run workflow*. Sin secretos, el workflow informa la configuración pendiente y omite el despliegue; no simula una publicación exitosa.
+
+El endpoint público real será proporcionado por Cloudflare tras el despliegue. No confundas el enlace local `192.168.x.x` con el dominio público.
+
+### Pruebas de navegador
+
+En CI se utiliza Chromium sobre Ubuntu 24.04. Para reproducirlas localmente:
+
+```bash
+npm ci
+npm install --no-save --package-lock=false @playwright/test@1.56.1
+npx playwright install chromium
+npx playwright test
+```
+
+La suite recorre lecciones, progreso, modo Pro, vencimiento del temporizador y anchos de 360, 390, 768 y 1440 px. No sustituye la verificación visual y táctil en un teléfono físico.

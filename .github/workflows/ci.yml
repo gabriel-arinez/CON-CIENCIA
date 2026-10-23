@@ -1,0 +1,44 @@
+name: Validar CON-CIENCIA V2
+on:
+  push:
+    branches: [main, fix/v2-calidad-educativa-mobile]
+  pull_request:
+    branches: [main]
+jobs:
+  validation:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+  browser:
+    # Playwright 1.56 supports the Ubuntu 24.04 browser dependencies.
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    needs: validation
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm install --no-save --package-lock=false @playwright/test@1.56.1
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: v2-browser-test-failures
+          path: test-results
+          retention-days: 7

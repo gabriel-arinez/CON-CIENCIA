@@ -1,0 +1,43 @@
+name: Publicar CON-CIENCIA en Cloudflare Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      deployments: write
+    env:
+      CF_PAGES_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CF_PAGES_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Comprobar si existen credenciales
+        id: credentials
+        run: |
+          if [ -n "$CF_PAGES_TOKEN" ] && [ -n "$CF_PAGES_ACCOUNT" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Configura los secrets CLOUDFLARE_API_TOKEN y CLOUDFLARE_ACCOUNT_ID en GitHub para habilitar Cloudflare Pages."
+          fi
+      - name: Instalar dependencias
+        if: steps.credentials.outputs.configured == 'true'
+        run: npm ci
+      - name: Comprobar TypeScript y compilar
+        if: steps.credentials.outputs.configured == 'true'
+        run: npm run build
+      - name: Publicar carpeta dist en Pages
+        if: steps.credentials.outputs.configured == 'true'
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=con-ciencia --branch=main
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
