@@ -44,7 +44,7 @@ function validAttempt(value: unknown): value is Attempt {
   if (a.bankVersion !== undefined && a.bankVersion !== 2) return false;
   if (!Array.isArray(a.answers) || a.answers.length !== 3 ||
       !a.answers.every((n) => Number.isInteger(n) && n >= -1 && n < 3)) return false;
-  if (a.total !== 3 || !Number.isInteger(a.score) ||
+  if (a.total !== 3 || typeof a.score !== "number" || !Number.isInteger(a.score) ||
       a.score < 0 || a.score > a.total) return false;
   if (typeof a.date !== "string" || !Number.isFinite(Date.parse(a.date))) return false;
   const questions = a.advanced ? challengeQuestions(topic) : topic.questions;
