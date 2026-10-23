@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Timer, Check, Trophy, RotateCcw, ArrowRight } from "lucide-react";
 import { type Topic, type Question } from "../content";
-import { grade, type State, type Attempt } from "../model";
+import { grade, remainingSeconds, type State, type Attempt } from "../model";
 import { Button } from "./ui/button";
 type Update = (s: State | ((s: State) => State)) => void;
 export default function Quiz({
@@ -35,6 +35,7 @@ export default function Quiz({
       total: questions.length,
       date: new Date().toISOString(),
       advanced,
+      bankVersion: 2,
     };
     update((s) => ({ ...s, attempts: [...s.attempts, a] }));
   };
@@ -43,7 +44,7 @@ export default function Quiz({
     const deadline = Date.now() + 90000;
     const timer = window.setInterval(
       () =>
-        setRemaining(Math.max(0, Math.ceil((deadline - Date.now()) / 1000))),
+        setRemaining(remainingSeconds(deadline, Date.now())),
       250,
     );
     return () => clearInterval(timer);
